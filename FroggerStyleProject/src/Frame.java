@@ -97,7 +97,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		//main character stops moving if not on a rideable object
 		//but also lets limit it in the y
 		
-		if((!riding && myPenguin.getY() == 370) || (!riding && myPenguin.getY() == 265)) {//|| (!riding && myPenguin.getY() < 380 && !riding && myPenguin.getY() < 420)) {
+		if((!riding && myPenguin.getY() == 370) || (!riding && myPenguin.getY() == 310)) {//|| (!riding && myPenguin.getY() < 380 && !riding && myPenguin.getY() < 420)) {
 			riding = false;
 			myPenguin.setvx(0);
 			myPenguin.x = 250;
