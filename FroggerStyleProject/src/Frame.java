@@ -13,11 +13,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
 
 public class Frame extends JPanel implements ActionListener, MouseListener, KeyListener {
@@ -55,6 +59,8 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	IceBlock myIce = new IceBlock(200, 400);
 	IceScroller[] row2 = new IceScroller[5];
 	IcedScroller[] row2i =  new IcedScroller[4];
+	ArrayList<IcedScroller> row1List = new ArrayList<IcedScroller>();
+	ArrayList<lives> lives = new ArrayList<lives>();
 	
 	//JellyFish myJellyFish = new JellyFish(50,50);
 	JellyfishScroller[] row3 = new JellyfishScroller[4];
@@ -89,6 +95,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		}
 		for(IceScroller obj : row2) {
 			if(obj.collided(myPenguin)) {
+
 				myPenguin.setvx(obj.getvx());
 				riding = true;
 				break;
@@ -97,7 +104,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		//main character stops moving if not on a rideable object
 		//but also lets limit it in the y
 		
-		if((!riding && myPenguin.getY() == 370) || (!riding && myPenguin.getY() == 310)) {//|| (!riding && myPenguin.getY() < 380 && !riding && myPenguin.getY() < 420)) {
+		if((!riding && myPenguin.getY() == 370) || (!riding && myPenguin.getY() == 220)) {//|| (!riding && myPenguin.getY() < 380 && !riding && myPenguin.getY() < 420)) {
 			riding = false;
 			myPenguin.setvx(0);
 			myPenguin.x = 250;
@@ -105,6 +112,8 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			//if i riding any the duck is in the water area
 			//reset back to starting 
 			System.out.println("you fell into the water");
+			JOptionPane.showMessageDialog(null,"You fell in the water and drowned!");
+
 
 		}
 		else if (!riding ) {
@@ -125,8 +134,17 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		//have the row 1 objects paint on the screen
 		//or each obj in row 
 		
-		
-		
+		for(IcedScroller obj : row1List) {
+			obj.paint(g);
+		}
+		if(present1.collided(myPenguin)) {
+			System.out.println("YAY! --- You win!");
+			myPenguin.setY(670);
+			myPenguin.setX(250);
+			JOptionPane.showMessageDialog(null,"You won! To play again press enter");
+
+			
+		}
 		
 		
 		//jelly fish
@@ -134,9 +152,9 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		for(JellyfishScroller obj : row3) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				System.out.println("ouch");
-				myPenguin.setY(670);
-				myPenguin.setX(250);
+				resetPenguin();
+				JOptionPane.showMessageDialog(null,"The jellyfish stung you!");
+;
 			}
 		}
 		
@@ -145,9 +163,9 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		for(PolarBearScroller obj : row4) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				System.out.println("ouch");
-				myPenguin.setY(670);
-				myPenguin.setX(250);
+				resetPenguin();
+				JOptionPane.showMessageDialog(null,"You were hit by the polar bear!");
+
 			}
 		}
 		
@@ -155,38 +173,50 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		for(PolarBearOtherScroller obj : row4i) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				System.out.println("ouch");
-				myPenguin.setY(670);
-				myPenguin.setX(250);
+				resetPenguin();
+				JOptionPane.showMessageDialog(null,"You were hit by the polar bear!");
+
 			}
 		}
 		//mySeal.paint(g);
 		for(SealScroller obj : row5) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				System.out.println("ouch");
-				myPenguin.setY(670);
-				myPenguin.setX(250);
+				resetPenguin();
+				JOptionPane.showMessageDialog(null,"The seal made you drown");
+
 			}
 		}
 		
 		for(DeerScroller obj : row6) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				System.out.println("ouch");
-				myPenguin.setY(670);
-				myPenguin.setX(250);
+				
+				JOptionPane.showMessageDialog(null,"The deer knocked you over!");
+				resetPenguin();
 			}
 		}
-		
-		if(present1.collided(myPenguin)) {
-			System.out.println("YAY!");
-			myPenguin.setY(670);
-			myPenguin.setX(250);
-			System.out.println("Game Reset");
-
+		for(lives obj : lives){
+			//draw the lives images
+			obj.paint(g);
 		}
+		
+		
 	}
+	public void resetPenguin() {
+		myPenguin.setvx(0);
+		myPenguin.x = 250;
+		myPenguin.y = 670;
+		if(lives.size()>0) {
+			lives.remove(lives.size()-1);
+		}else if(lives.size() == 1) {
+			resetPenguin();
+			JOptionPane.showMessageDialog(null,"All your lives have finished! Press enter to restart");
+			}
+		
+	}
+
+	
 	
 	//collision detection
 	//for each ghost object in row array
@@ -217,6 +247,12 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			row1[i] = new PenguinScroller(i*200,300); 
 		}
 		
+		
+		//practice row for arraylist
+		//for(int i = 0; i < 10; i++) {
+		//	this.row1List.add(new IcedScroller(i*210, 345));
+		//}
+		
 		for( int j = 0; j <row2.length; j++) {
 			row2[j] = new IceScroller(j*200, 200);
 		}
@@ -242,6 +278,13 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		
 		for (int e =0; e <row6.length; e++) {
 			row6[e] = new DeerScroller(e*250, 500);
+		}
+		
+		
+		//start with 6 attempts
+		for(int i = 0; i <6; i++) {
+			this.lives.add(new lives(i*40, 730));
+			
 		}
 		//the cursor image must be outside of the src folder
 		//you will need to import a couple of classes to make it fully 
@@ -311,6 +354,10 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			myPenguin.move(2);
 		}else if (arg0.getKeyCode() ==68) {
 			myPenguin.move(3);
+		}
+		if(arg0.getKeyCode() == 10) {
+			myPenguin.setY(670);
+			myPenguin.setX(250);
 		}
 		
 		

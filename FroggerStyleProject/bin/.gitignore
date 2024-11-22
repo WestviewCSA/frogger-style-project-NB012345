@@ -1,5 +1,9 @@
 /imgs/
+/Background.class
 /Deer.class
 /DeerScroller.class
-/PolarBearOtherScroller.class
-/IcedScroller.class
+/Frame.class
+/IceBlock.class
+/IceScroller.class
+/lives.class
+/heart.png
