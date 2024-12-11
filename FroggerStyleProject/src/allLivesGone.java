@@ -2,12 +2,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
 import java.net.URL;
 
-public class penguin{
+public class allLivesGone{
 	private Image forward, backward, left, right; 	
 	private AffineTransform tx;
 	
@@ -16,18 +15,16 @@ public class penguin{
 	int width, height;				//collision detection 
 	int x, y;						//position of the object
 	int vx, vy;						//movement variables
-	double scaleWidth = 2.2;		//change to scale image
-	double scaleHeight = 2.0; 		//change to scale image
+	double scaleWidth = 1.0;		//change to scale image
+	double scaleHeight = 1.0; 		//change to scale image
 
-	public penguin() {
-		forward 	= getImage("/imgs/"+"penguinn.png"); //load the image for Tree
+	public allLivesGone() {
+		forward 	= getImage("/imgs/"+"alllivegone.png"); //load the image for Tree
 		//backward 	= getImage("/imgs/"+"backward.png"); //load the image for Tree
 		//left 		= getImage("/imgs/"+"left.png"); //load the image for Tree
 		//right 		= getImage("/imgs/"+"right.png"); //load the image for Tree
 
-		//width and height or hit box
-		width = 40;
-		height = 36;
+	
 		
 		//used for placement
 		x = 600/2-width/2;
@@ -45,7 +42,7 @@ public class penguin{
 	}
 
 	//second constructor - allow setting x and y during construction
-	public penguin(int x, int y) {
+	public allLivesGone(int x, int y) {
 		//call the default constructor for all the normal stuff
 		this();//invokes original constructor
 		
@@ -55,63 +52,8 @@ public class penguin{
 	}
 	
 	
-	public void move(int dir){
-		
-		switch(dir) {
-		case 0: //hop up
-			y-= 25;
-			break;
-		
-		case 1: //hop down
-			y+= 25;
-			break;
-			
-		case 2: //hop left
-			x -= 25;
-			break;
-			
-		case 3: //hop right
-			x += 25;
-			break;
-		
-		
-		}
-	}
 	
 	
-	
-	/*
-	 * Getters!
-	 */
-	
-	public int getX() {
-		return x;
-	}
-	
-	public int getY() {
-		return y;
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-	
-	public int getHeight() {
-		return height;
-	}
-	
-	public void setX(int newX) {
-		x = newX;
-	}
-	public void setY(int newY) {
-		y = newY;
-	}
-	public void setvx(int newvx) {
-		vx = newvx;
-	}
-	
-	//250, 670
-
 	public void paint(Graphics g) {
 		//these are the 2 lines of code needed draw an image on the screen
 		Graphics2D g2 = (Graphics2D) g;
@@ -141,7 +83,7 @@ public class penguin{
 	private Image getImage(String path) {
 		Image tempImage = null;
 		try {
-			URL imageURL = penguin.class.getResource(path);
+			URL imageURL = allLivesGone.class.getResource(path);
 			tempImage = Toolkit.getDefaultToolkit().getImage(imageURL);
 		} catch (Exception e) {
 			e.printStackTrace();

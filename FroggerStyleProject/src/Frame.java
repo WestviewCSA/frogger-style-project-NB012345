@@ -34,15 +34,21 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	long ellapseTime = 0;
 	Font timeFont = new Font("Courier", Font.BOLD, 70);
 	int level = 0;
+	int score = 0;
+	boolean gameOver = false;
 	
-	
-	Font myFont = new Font("Courier", Font.BOLD, 40);
-	SimpleAudioPlayer backgroundMusic = new SimpleAudioPlayer("scifi.wav", false);
+	Font myFont = new Font("Monospaced", Font.BOLD, 30);
+	SimpleAudioPlayer backgroundMusic = new SimpleAudioPlayer("scifi.wav", true);
+	SimpleAudioPlayer winner = new SimpleAudioPlayer("win.wav", false);
+	SimpleAudioPlayer points = new SimpleAudioPlayer("points.wav", false);
+
 //	Music soundBang = new Music("bang.wav", false);
 //	Music soundHaha = new Music("haha.wav", false);
 	
 	//stays at the top so all other objects go on the bottom
 	Background theBackground = new Background(0,0);
+	allLivesGone liveBackground = new allLivesGone(0,0);
+	gameWon gameWon = new gameWon(0,0);
 	
 	penguin myPenguin = new penguin(250, 670);
 	Present present1 = new Present(250, 25);
@@ -62,14 +68,11 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 	ArrayList<IcedScroller> row1List = new ArrayList<IcedScroller>();
 	ArrayList<lives> lives = new ArrayList<lives>();
 	
-	//JellyFish myJellyFish = new JellyFish(50,50);
 	JellyfishScroller[] row3 = new JellyfishScroller[4];
 	
-	//Polarbear myPolarBear = new Polarbear(10,10);
 	PolarBearScroller[] row4 = new PolarBearScroller[4];
 	
 	PolarBearOtherScroller[] row4i = new PolarBearOtherScroller[4];
-	//Seal mySeal = new Seal(200,200);
 	SealScroller[] row5 = new SealScroller[4];
 	
 	DeerScroller[] row6 = new DeerScroller[4];
@@ -78,8 +81,13 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		
 		theBackground.paint(g);
 		present1.paint(g);
-		
+		backgroundMusic.play();
+		//ADD TEXT
+		g.setFont(myFont);
+		g.setColor(new Color(255,255,255));
+		g.drawString("score:"+score, 450,30); 
 		//these two need to be here because the penguin goes on top of these objects
+		
 		
 		boolean riding = false;
 		for(IcedScroller obj : row2i) {
@@ -106,9 +114,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		
 		if((!riding && myPenguin.getY() == 370) || (!riding && myPenguin.getY() == 220)) {//|| (!riding && myPenguin.getY() < 380 && !riding && myPenguin.getY() < 420)) {
 			riding = false;
-			myPenguin.setvx(0);
-			myPenguin.x = 250;
-			myPenguin.y = 670;
+			resetPenguin();
 			//if i riding any the duck is in the water area
 			//reset back to starting 
 			System.out.println("you fell into the water");
@@ -129,7 +135,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		//paint the other objects on the screen
 		myPenguin.paint(g);
 
-		
+	
 
 		//have the row 1 objects paint on the screen
 		//or each obj in row 
@@ -138,14 +144,16 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			obj.paint(g);
 		}
 		if(present1.collided(myPenguin)) {
-			System.out.println("YAY! --- You win!");
-			myPenguin.setY(670);
-			myPenguin.setX(250);
-			JOptionPane.showMessageDialog(null,"You won! To play again press enter");
-
+			//winningAudio = true;
+			myPenguin.setvx(0);
+			myPenguin.x = 250;
+			myPenguin.y = 670;
+			score++;
+			points = new SimpleAudioPlayer("points.wav", false);
+			points.play();
 			
-		}
 		
+		}
 		
 		//jelly fish
 		//myJellyFish.paint(g);
@@ -154,7 +162,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			if(obj.collided(myPenguin)) {
 				resetPenguin();
 				JOptionPane.showMessageDialog(null,"The jellyfish stung you!");
-;
+				
 			}
 		}
 		
@@ -165,7 +173,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			if(obj.collided(myPenguin)) {
 				resetPenguin();
 				JOptionPane.showMessageDialog(null,"You were hit by the polar bear!");
-
+				
 			}
 		}
 		
@@ -175,7 +183,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			if(obj.collided(myPenguin)) {
 				resetPenguin();
 				JOptionPane.showMessageDialog(null,"You were hit by the polar bear!");
-
+				
 			}
 		}
 		//mySeal.paint(g);
@@ -184,21 +192,38 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			if(obj.collided(myPenguin)) {
 				resetPenguin();
 				JOptionPane.showMessageDialog(null,"The seal made you drown");
-
+				
 			}
 		}
 		
 		for(DeerScroller obj : row6) {
 			obj.paint(g);
 			if(obj.collided(myPenguin)) {
-				
-				JOptionPane.showMessageDialog(null,"The deer knocked you over!");
 				resetPenguin();
+				JOptionPane.showMessageDialog(null,"The deer knocked you over!");
+				
 			}
 		}
+		
 		for(lives obj : lives){
 			//draw the lives images
 			obj.paint(g);
+		}
+		if(score >= 3) {
+			gameWon.paint(g);
+			winner = new SimpleAudioPlayer("win.wav", false);
+			//score = 0;
+			winner.play();
+		
+		}
+		if(lives.size() <=0) {
+			liveBackground.paint(g);
+		}
+		
+		if(gameOver) {
+			myPenguin.x = 250;
+			myPenguin.y = 670;
+			liveBackground.paint(g);
 		}
 		
 		
@@ -207,22 +232,33 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		myPenguin.setvx(0);
 		myPenguin.x = 250;
 		myPenguin.y = 670;
-		if(lives.size()>0) {
+		if(lives.size() > 1) {
 			lives.remove(lives.size()-1);
-		}else if(lives.size() == 1) {
-			resetPenguin();
-			JOptionPane.showMessageDialog(null,"All your lives have finished! Press enter to restart");
+		}else  {
+			gameOver = true;			
+			
 			}
 		
 	}
 
+	public void resetGame() {
+		gameOver = false;
+		myPenguin.setvx(0);
+		myPenguin.x = 250;
+		myPenguin.y = 670;
+		score = 0;
+		resetLives();
+		
+	}
 	
+	public void resetLives(){
+		for(int i = 0; i <6; i++) {
+			this.lives.add(new lives(i*40, 730));
+		}
+	}
 	
 	//collision detection
 	//for each ghost object in row array
-	
-	
-	
 	
 	
 	public static void main(String[] arg) {
@@ -355,9 +391,18 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 		}else if (arg0.getKeyCode() ==68) {
 			myPenguin.move(3);
 		}
-		if(arg0.getKeyCode() == 10) {
-			myPenguin.setY(670);
-			myPenguin.setX(250);
+		
+		if(arg0.getKeyCode() ==10) {
+			if(score >= 3) {
+				resetGame();
+			}
+			if(gameOver) {
+				resetGame();
+			}
+			
+		}
+		if(arg0.getKeyCode() ==82) {
+			resetGame();
 		}
 		
 		

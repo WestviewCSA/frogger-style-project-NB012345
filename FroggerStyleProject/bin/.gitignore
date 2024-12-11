@@ -5,5 +5,12 @@
 /Frame.class
 /IceBlock.class
 /IceScroller.class
-/lives.class
-/heart.png
+/IcedScroller.class
+/JellyFish.class
+/JellyfishScroller.class
+/PenguinScroller.class
+/PolarBearOtherScroller.class
+/PolarBearScroller.class
+/winner-award-156892.mp3
+/allLivesGone.class
+/gameWon.class
