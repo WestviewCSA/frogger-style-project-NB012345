@@ -401,7 +401,7 @@ public class Frame extends JPanel implements ActionListener, MouseListener, KeyL
 			}
 			
 		}
-		if(arg0.getKeyCode() ==82) {
+		if(arg0.getKeyCode() == 82) {
 			resetGame();
 		}
 		
